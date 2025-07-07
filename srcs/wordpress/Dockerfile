@@ -1,6 +1,6 @@
 FROM debian:bullseye
 
-RUN apt update && spt install -y php-fpm php-mysql curl
+RUN apt update && apt install -y php-fpm php-mysql curl
 
 RUN mkdir -p /var/www/html && \
 	curl -o /tmp/wordpress.tar.gz https://wordpress.org/latest.tar.gz && \
