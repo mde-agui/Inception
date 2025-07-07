@@ -3,7 +3,7 @@ version: '3.8'
 services:
   nginx:
     build: ./nginx
-    constainer_name: nginx
+    container_name: nginx
     ports:
       - "443:443"
     volumes:
