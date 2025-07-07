@@ -1,6 +1,11 @@
 FROM debian:bullseye
 
-RUN apt update && apt install -y php-fpm php-mysql curl
+RUN echo "deb http://deb.debian.org/debian bullseye main" > /etc/apt/sources.list && \
+	echo "deb http://deb.debian.org/debian-security bullseye-security main" >> /etc/apt/sources.list && \
+	echo "deb http://deb.debian.org/debian bullseye-updates main" >> /etc/apt/sources.list
+
+RUN apt update && apt install -y php-fpm php-mysql curl && \
+	ln -s /usr/sbin/php-fpm7.4 /usr/sbin/php-fpm
 
 RUN mkdir -p /var/www/html && \
 	curl -o /tmp/wordpress.tar.gz https://wordpress.org/latest.tar.gz && \
