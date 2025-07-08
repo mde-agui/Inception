@@ -6,13 +6,17 @@ RUN echo "deb http://deb.debian.org/debian bullseye main" > /etc/apt/sources.lis
 
 RUN apt update && apt install -y mariadb-server
 
-RUN mkdir -p /docker-entrypoint-initdb.d
+RUN mkdir -p /var/lib/mysql /run/mysqld /docker-entrypoint-initdb.d && \
+	chown -R mysql:mysql /var/lib/mysql /run/mysqld && \
+	chmod -R 755 /var/lib/mysql /run/mysqld
+
+RUN mysql_install_db --user=mysql --datadir=/var/lib/mysql
 
 COPY ./init.sql /docker-entrypoint-initdb.d/init.sql
+COPY ./entrypoint.sh /entrypoint.sh
 
-RUN chown -R mysql:mysql /var/lib/mysql && \
-	chmod -R 755 /var/lib/mysql
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 3306
 
-CMD ["mysqld", "--user=mysql", "--init-file=/docker-entrypoint-initdb.d/init.sql"]
+ENTRYPOINT ["/entrypoint.sh"]

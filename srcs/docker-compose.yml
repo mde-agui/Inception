@@ -29,10 +29,11 @@ services:
         condition: service_healthy
     restart: always
     healthcheck:
-      test: ["CMD", "curl", "-f", "https://localhost:9000"]
+      test: ["CMD", "curl", "-f", "http://localhost:9000"]
       interval: 10s
       timeout: 5s
       retries: 3
+      start_period: 30s
     environment:
       - WORDPRESS_DB_HOST=mariadb
       - WORDPRESS_DB_NAME=${DB_NAME}
