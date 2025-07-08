@@ -18,10 +18,10 @@ RUN mkdir -p /var/www/html && \
 	tar -xzf /tmp/wordpress.tar.gz -C /var/www/html --strip-components=1 && \
 	rm /tmp/wordpress.tar.gz
 
+COPY ./wp-config.php /var/www/html/wp-config.php
+
 RUN chown -R www-data:www-data /var/www/html && \
 	chmod -R 755 /var/www/html
-
-#COPY ./wp-config.php /var/www/html/wp-config.php
 
 EXPOSE 9000
 
