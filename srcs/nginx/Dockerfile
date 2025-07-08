@@ -4,7 +4,7 @@ RUN echo "deb http://deb.debian.org/debian bullseye main" > /etc/apt/sources.lis
 	echo "deb http://deb.debian.org/debian-security bullseye-security main" >> /etc/apt/sources.list && \
 	echo "deb http://deb.debian.org/debian bullseye-updates main" >> /etc/apt/sources.list
 
-RUN apt update && apt install -y nginx openssl
+RUN apt update && apt install -y nginx openssl net-tools procps curl
 
 RUN mkdir /etc/nginx/ssl && \
 	openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
