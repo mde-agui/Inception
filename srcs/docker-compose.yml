@@ -11,7 +11,8 @@ services:
     networks:
       - inception
     depends_on:
-      - wordpress
+      wordpress:
+        condition: service_healthy
     restart: always
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME}
@@ -24,8 +25,14 @@ services:
     networks:
       - inception
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
     restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost:9000"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     environment:
       - WORDPRESS_DB_HOST=mariadb
       - WORDPRESS_DB_NAME=${DB_NAME}
@@ -40,6 +47,11 @@ services:
     networks:
       - inception
     restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASS}
       - DB_NAME=${DB_NAME}
