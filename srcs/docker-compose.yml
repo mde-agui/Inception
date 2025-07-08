@@ -48,10 +48,11 @@ services:
       - inception
     restart: always
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASS}"]
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 5
+      start_period: 30s
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASS}
       - DB_NAME=${DB_NAME}
