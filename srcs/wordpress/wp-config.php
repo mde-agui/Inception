@@ -17,7 +17,9 @@ define('NONCE_SALT',       'TEWJe>1BT@h`ae.)~V)T!scHrPnP-(~~;,aBa%%v/t%J_S]y.bT8
 
 $table_prefix = 'wp_';
 
-define('WP_DEBUG', false);
+define('WP_DEBUG', true);
+define('WP_DEBUG_LOG', true);
+define('WP_DEBUG_DISPLAY', false);
 
 if (!defined('ABSPATH'))
 {
