@@ -58,7 +58,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-    rnv_file:
+    env_file:
       - .env
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASS}
