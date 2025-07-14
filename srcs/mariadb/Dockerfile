@@ -4,7 +4,7 @@ RUN echo "deb http://deb.debian.org/debian bullseye main" > /etc/apt/sources.lis
 	echo "deb http://deb.debian.org/debian-security bullseye-security main" >> /etc/apt/sources.list && \
 	echo "deb http://deb.debian.org/debian bullseye-updates main" >> /etc/apt/sources.list
 
-RUN apt update && apt install -y mariadb-server
+RUN apt update && apt install -y mariadb-server gettext-base iputils-ping
 
 RUN mkdir -p /var/lib/mysql /run/mysqld /docker-entrypoint-initdb.d && \
 	chown -R mysql:mysql /var/lib/mysql /run/mysqld && \

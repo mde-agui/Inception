@@ -1,7 +1,6 @@
 all:
 	mkdir -p /home/mde-agui/data/wordpress /home/mde-agui/data/database
 	docker-compose -f srcs/docker-compose.yml up --build -d
-	docker network create inception
 
 stop:
 	docker-compose -f srcs/docker-compose.yml down
