@@ -25,7 +25,7 @@ echo "DB_PASS: $DB_PASS" >> /var/www/html/wp-debug.log
 export DB_HOST DB_NAME DB_USER DB_PASS
 
 echo "Testing database connection..." >> /var/www/html/wp-debug.log
-if mysql -h mariadb -P 3306 -u $DB_USER -p$DB_PASS -e "USE $DB_NAME; SELECT 1;" 2>> /var/www/htmç/wp-debug.log; then
+if mysql -h mariadb -P 3306 -u $DB_USER -p$DB_PASS -e "USE $DB_NAME; SELECT 1;" 2>> /var/www/html/wp-debug.log; then
 	echo "Database connection successful!" >> /var/www/html/wp-debug.log
 else
 	echo "Database connection failed..." >> /var/www/html/wp-debug.log
@@ -43,8 +43,8 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 	echo "Generated wp-config.php" >> /var/www/html/wp-debug.log
 fi
 
-for i in {1.30}; do
-	if mysqladmin ping -h "$DB_HOST" -p 3306 -u "$DB_USER" -p"$DB_PASS" --silent; then
+for i in {1..30}; do
+	if mysqladmin ping -h "$DB_HOST" -P 3306 -u "$DB_USER" -p"$DB_PASS" --silent; then
 		echo "MariaDB is ready" >> /var/www/html/wp-debug.log
 		break
 	fi
