@@ -29,6 +29,8 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy
+      redis:
+        condition: service_started
     restart: always
     healthcheck:
       test: ["CMD", "pidof", "php-fpm7.4"]
@@ -68,6 +70,17 @@ services:
       - DB_PASS=${DB_PASS}
       - WP_ADMIN_USER=${WP_ADMIN_USER}
       - WP_ADMIN_PASS=${WP_ADMIN_PASS}
+
+  redis:
+    build: ./redis
+    container_name: redis
+    networks:
+      - inception
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - REDIS_PASS=${REDIS_PASS}
 
 volumes:
   wordpress_files:

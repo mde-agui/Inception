@@ -62,6 +62,8 @@ if ! wp core is-installed --path=/var/www/html --allow-root 2>> /var/www/html/wp
 		--admin_email="admin@${DOMAIN_NAME}" \
 		--skip-email \
 		--allow-root || echo "WordPress installation failed" >> /var/www/html/wp-debug.log
+	wp plugin install redis-cache --activate --allow-root
+	wp redis enable --allow-root
 fi
 
 echo "Starting PHP-FPM" >> /var/www/html/wp-debug.log

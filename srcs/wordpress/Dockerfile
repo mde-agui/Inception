@@ -4,7 +4,7 @@ RUN echo "deb http://deb.debian.org/debian bullseye main" > /etc/apt/sources.lis
 	echo "deb http://deb.debian.org/debian-security bullseye-security main" >> /etc/apt/sources.list && \
 	echo "deb http://deb.debian.org/debian bullseye-updates main" >> /etc/apt/sources.list
 
-RUN apt update && apt install -y php-fpm php-mysql curl net-tools mariadb-client gettext-base && \
+RUN apt update && apt install -y php-fpm php-mysql php-redis curl net-tools mariadb-client gettext-base && \
 	ln -s /usr/sbin/php-fpm7.4 /usr/sbin/php-fpm
 
 RUN curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
