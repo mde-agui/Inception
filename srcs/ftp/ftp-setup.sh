@@ -2,14 +2,15 @@
 
 set -e
 
-FTP_USER=${FTP_USER:-${FTP_USER}}
-FTP_PASS=${FTP_PASS:-${FTP_PASS}}
+if ! id "$FTP_USER" &>/dev/null; then
+	adduser --disabled-password --gecos "" "$FTP_USER"
+	echo "$FTP_USER:$FTP_PASS" | chpasswd
+fi
 
-sed -i "s|\${DOMAIN_NAME}|${DOMAIN_NAME}|g" /etc/vsftpd.conf
-
-useradd -m -d /var/www/html -s /bin/bash ${FTP_USER}
-echo "${FTP_USER}:${FTP_PASS}" | chpasswd
+mkdir -p /var/www/html
+chown -R "$FTP_USER":"$FTP_USER" /var/www/html
+chmod a-w /var/www/html
 
 unset FTP_USER FTP_PASS
 
-exec "$@"
+exec /usr/sbin/vsftpd /etc/vsftpd.conf

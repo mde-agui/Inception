@@ -82,10 +82,17 @@ services:
       - .env
     environment:
       - REDIS_PASS=${REDIS_PASS}
-  
+
   ftp:
-    build: ./ftp
+    build:
+      context: ./ftp
+      args:
+        DOMAIN_NAME: ${DOMAIN_NAME}
     container_name: ftp
+    ports:
+      - "20:20"
+      - "21:21"
+      - "10000-10100:10000-10100"
     volumes:
       - wordpress_files:/var/www/html
     networks:
@@ -94,6 +101,7 @@ services:
     environment:
       - FTP_USER=${FTP_USER}
       - FTP_PASS=${FTP_PASS}
+      - DOMAIN_NAME=${DOMAIN_NAME}
 
 volumes:
   wordpress_files:

@@ -39,6 +39,7 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 		-e "s|\${DB_NAME}|$DB_NAME|g" \
 		-e "s|\${DB_USER}|$DB_USER|g" \
 		-e "s|\${DB_PASS}|$DB_PASS|g" \
+		-e "s|\${REDIS_PASS}|$REDIS_PASS|g" \
 		/var/www/html/wp-config.php.template > /var/www/html/wp-config.php
 	cat /var/www/html/wp-config.php >> /var/www/html/wp-debug.log
 	chown www-data:www-data /var/www/html/wp-config.php
