@@ -8,6 +8,7 @@ DB_PASS=${WORDPRESS_DB_PASSWORD:-${DB_PASS}}
 WP_ADMIN_USER=${WP_ADMIN_USER:-${WP_ADMIN_USER}}
 WP_ADMIN_PASS=${WP_ADMIN_PASS:-${WP_ADMIN_PASS}}
 DOMAIN_NAME=${DOMAIN_NAME:-${DOMAIN_NAME}}
+REDIS_PASS=${REDIS_PASS:-${REDIS_PASS}}
 
 echo "DB_HOST: ${WORDPRESS_DB_HOST:-mariadb}" >> /var/www/html/wp-debug.log
 echo "DB_NAME: ${WORDPRESS_DB_NAME:-${DB_NAME}}" >> /var/www/html/wp-debug.log
@@ -16,13 +17,15 @@ echo "DB_PASS: ${WORDPRESS_DB_PASSWORD:-${DB_PASS}}" >> /var/www/html/wp-debug.l
 echo "WP_ADMIN_USER: ${WP_ADMIN_USER:-${WP_ADMIN_USER}}" >> /var/www/html/wp-debug.log
 echo "WP_ADMIN_PASS: ${WP_ADMIN_PASS:-${WP_ADMIN_PASS}}" >> /var/www/html/wp-debug.log
 echo "DOMAIN_NAME: ${DOMAIN_NAME:-${DOMAIN_NAME}}" >> /var/www/html/wp-debug.log
+echo "REDIS_PASS: ${REDIS_PASS:-${REDIS_PASS}}" >> /var/www/html/wp-debug.log
 
 echo "DB_HOST: $DB_HOST" >> /var/www/html/wp-debug.log
 echo "DB_NAME: $DB_NAME" >> /var/www/html/wp-debug.log
 echo "DB_USER: $DB_USER" >> /var/www/html/wp-debug.log
 echo "DB_PASS: $DB_PASS" >> /var/www/html/wp-debug.log
+echo "REDIS_PASS: $REDIS_PASS" >> /var/www/html/wp-debug.log
 
-export DB_HOST DB_NAME DB_USER DB_PASS
+export DB_HOST DB_NAME DB_USER DB_PASS REDIS_PASS
 
 echo "Testing database connection..." >> /var/www/html/wp-debug.log
 if mysql -h mariadb -P 3306 -u $DB_USER -p$DB_PASS -e "USE $DB_NAME; SELECT 1;" 2>> /var/www/html/wp-debug.log; then
@@ -62,8 +65,8 @@ if ! wp core is-installed --path=/var/www/html --allow-root 2>> /var/www/html/wp
 		--admin_email="admin@${DOMAIN_NAME}" \
 		--skip-email \
 		--allow-root || echo "WordPress installation failed" >> /var/www/html/wp-debug.log
-	wp plugin install redis-cache --activate --allow-root
-	wp redis enable --allow-root
+	wp plugin install redis-cache --activate --path=/var/www/html --allow-root
+	wp redis enable --path=/var/www/html --allow-root
 fi
 
 echo "Starting PHP-FPM" >> /var/www/html/wp-debug.log

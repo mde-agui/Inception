@@ -23,6 +23,7 @@ define('WP_DEBUG_DISPLAY', false);
 define('WP_REDIS_HOST', 'redis');
 define('WP_REDIS_PORT', 6379);
 define('WP_REDIS_PASSWORD', '${REDIS_PASS}');
+define('WP_REDIS_CLIENT', 'phpredis')
 
 if (!defined('ABSPATH'))
 {
