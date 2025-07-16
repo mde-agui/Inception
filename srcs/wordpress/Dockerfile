@@ -33,7 +33,7 @@ COPY ./wp-setup.sh /wp-setup.sh
 
 RUN chown -R www-data:www-data /var/www/html && \
 	chmod -R 755 /var/www/html && \
-	chmod +x /wp.setup.sh
+	chmod +x /wp-setup.sh
 
 EXPOSE 9000
 
