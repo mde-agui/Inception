@@ -82,6 +82,18 @@ services:
       - .env
     environment:
       - REDIS_PASS=${REDIS_PASS}
+  
+  ftp:
+    build: ./ftp
+    container_name: ftp
+    volumes:
+      - wordpress_files:/var/www/html
+    networks:
+      - inception
+    restart: always
+    environment:
+      - FTP_USER=${FTP_USER}
+      - FTP_PASS=${FTP_PASS}
 
 volumes:
   wordpress_files:
