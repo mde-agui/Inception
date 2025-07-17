@@ -118,6 +118,22 @@ services:
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME}
 
+  adminer:
+    build: ./adminer
+    container_name: adminer
+    ports:
+      - "8081:8081"
+    networks:
+      - inception
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
 volumes:
   wordpress_files:
     driver: local
