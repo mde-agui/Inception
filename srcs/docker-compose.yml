@@ -98,6 +98,8 @@ services:
     networks:
       - inception
     restart: always
+    env_file:
+      - .env
     environment:
       - FTP_USER=${FTP_USER}
       - FTP_PASS=${FTP_PASS}
@@ -111,6 +113,8 @@ services:
     networks:
       - inception
     restart: always
+    env_file:
+      - .env
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME}
 
