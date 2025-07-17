@@ -9,7 +9,7 @@ fi
 
 mkdir -p /var/www/html
 chown -R "$FTP_USER":"$FTP_USER" /var/www/html
-chmod a-w /var/www/html
+chmod 755 /var/www/html
 
 unset FTP_USER FTP_PASS
 
