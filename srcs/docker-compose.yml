@@ -103,6 +103,17 @@ services:
       - FTP_PASS=${FTP_PASS}
       - DOMAIN_NAME=${DOMAIN_NAME}
 
+  static:
+    build: ./static
+    container_name: static
+    ports:
+      - "8080:8080"
+    networks:
+      - inception
+    restart: always
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+
 volumes:
   wordpress_files:
     driver: local
