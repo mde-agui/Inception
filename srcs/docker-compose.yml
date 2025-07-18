@@ -134,6 +134,17 @@ services:
       mariadb:
         condition: service_healthy
 
+  prometheus:
+    build: ./prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - inception
+    restart: always
+    env_file:
+      - .env
+
 volumes:
   wordpress_files:
     driver: local
