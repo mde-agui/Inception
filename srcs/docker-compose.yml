@@ -18,7 +18,7 @@ services:
       - .env
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME}
-      
+
   nginx_exporter:
     image: nginx/nginx-prometheus-exporter:latest
     container_name: nginx_exporter
@@ -170,6 +170,20 @@ services:
     restart: always
     env_file:
       - .env
+
+  grafana:
+    build: ./grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - inception
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      prometheus:
+        condition: service_started
 
 volumes:
   wordpress_files:
