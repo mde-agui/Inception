@@ -18,6 +18,21 @@ services:
       - .env
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME}
+      
+  nginx_exporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    container_name: nginx_exporter
+    command:
+      - "--nginx.scrape-uri=http://nginx/nginx_status"
+    ports:
+      - "9113:9113"
+    networks:
+      - inception
+    depends_on:
+      - nginx
+    restart: always
+    env_file:
+      - .env
 
   wordpress:
     build: ./wordpress
@@ -139,6 +154,17 @@ services:
     container_name: prometheus
     ports:
       - "9090:9090"
+    networks:
+      - inception
+    restart: always
+    env_file:
+      - .env
+
+  node_exporter:
+    build: ./node_exporter
+    container_name: node_exporter
+    ports:
+      - "9100:9100"
     networks:
       - inception
     restart: always

@@ -1,6 +1,6 @@
 FROM debian:bullseye
 
-RUN apt update && apt install -y wget
+RUN apt update && apt install -y wget curl
 RUN wget https://github.com/prometheus/prometheus/releases/download/v2.47.1/prometheus-2.47.1.linux-amd64.tar.gz && \
 	tar xvf prometheus-2.47.1.linux-amd64.tar.gz && \
 	mv prometheus-2.47.1.linux-amd64/prometheus /usr/local/bin/ && \
