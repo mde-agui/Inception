@@ -63,16 +63,6 @@ services:
       - REDIS_PASS=${REDIS_PASS}
       - WORDPRESS_CONFIG_EXTRA=define('WP_DEBUG', true); define('WP_DEBUG_LOG', '/var/www/html/wp-debug.log); define('WP_DEBUG_DISPLAY', false);
 
-  phpfpm_exporter:
-    image: hipages/php-fpm_exporter
-    container_name: phpfpm_exporter
-    ports:
-      - "9253:9253"
-    networks:
-      - inception
-    environment:
-      - PHP_FPM_SCRAPE_URI=tcp://wordpress:9000/status
-
   mariadb:
     build: ./mariadb
     container_name: mariadb
@@ -214,15 +204,16 @@ services:
     volumes:
       - wordpress_files:/var/www/html
       - /var/log/vsftpd.log:/var/log/vsftpd.log
-    network_mode: host
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
+      - nginx_conf:/etc/nginx
+    networks:
+      - inception
     restart: always
     env_file:
       - .env
     depends_on:
       nginx:
+        condition: service_healthy
+      wordpress:
         condition: service_healthy
       ftp:
         condition: service_started
@@ -240,6 +231,12 @@ volumes:
       type: none
       o: bind
       device: /home/mde-agui/data/database
+  nginx_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/mde-agui/data/nginx
 
 networks:
   inception:

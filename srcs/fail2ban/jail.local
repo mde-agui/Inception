@@ -2,17 +2,19 @@
 bantime = 3600
 findtime = 600
 maxretry = 5
+destemail = admin@mde-agui.42.fr
+sender = fail2ban@mde-agui.42.fr
 
 [wordpress]
 enable = true
 logpath = /var/www/html/wp-debug.log
 port = 443
 filter = wordpress
-action = iptables-multiport[name=wordpress, port="443"]
+action = nginx-block-ip[name=wordpress]
 
 [vsftpd]
 enabled = true
 logpath = /var/log/vsftpd.log
 port = 21
 filter = vsftpd
-action = iptables-multiport[name=vsftpd, port="21"]
+action = nginx-block-ip[name=vsftpd]

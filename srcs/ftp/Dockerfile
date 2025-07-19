@@ -19,6 +19,8 @@ RUN openssl req -x509 -nodes -days 365 \
 	-out /etc/ssl/certs/vsftpd.crt \
 	-subj "/C=PT/ST=Porto/L=Porto/O=42Porto/OU=FTP/CN=${DOMAIN_NAME}"
 
+RUN touch /var/log/vsftpd.log && chmod 644 /var/log/vsftpd.log
+
 EXPOSE 21 20 10000-10100
 
 ENTRYPOINT ["/ftp-setup.sh"]

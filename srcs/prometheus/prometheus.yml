@@ -10,10 +10,7 @@ scrape_configs:
       - targets: ['nginx_exporter:9113']
   - job_name: 'wordpress'
     static_configs:
-      - targets: ['wordpress:9000']
-  - job_name: 'phpfpm'
-    static_configs:
-      - targets: ['phpfpm_exporter:9253']
+      - targets: ['wordpress:9000']\
   - job_name: 'wordpress_app'
     metrics_path: /wp-metrics.php
     scheme: https

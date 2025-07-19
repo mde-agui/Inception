@@ -10,6 +10,8 @@ COPY ./generate-ssl.sh /generate-ssl.sh
 
 COPY ./nginx.conf /etc/nginx/nginx.conf
 
+RUN touch /etc/nginx/blocked_ips.conf && chmod 644 /etc/nginx/blocked_ips.conf
+
 EXPOSE 443
 
 CMD ["/bin/bash", "-c", "/generate-ssl.sh && nginx -g 'daemon off;'"]
