@@ -11,6 +11,16 @@ scrape_configs:
   - job_name: 'wordpress'
     static_configs:
       - targets: ['wordpress:9000']
+  - job_name: 'phpfpm'
+    static_configs:
+      - targets: ['phpfpm_exporter:9253']
+  - job_name: 'wordpress_app'
+    metrics_path: /wp-metrics.php
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    static_configs:
+      - targets: ['nginx:443']
   - job_name: 'mariadb'
     static_configs:
       - targets: ['mariadb:3306']

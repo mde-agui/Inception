@@ -30,6 +30,7 @@ RUN mkdir -p /var/www/html && \
 
 COPY ./wp-config.php.template /var/www/html/wp-config.php.template
 COPY ./wp-setup.sh /wp-setup.sh
+COPY ./wp-metrics.php /var/www/html/wp-metrics.php
 
 RUN chown -R www-data:www-data /var/www/html && \
 	chmod -R 755 /var/www/html && \

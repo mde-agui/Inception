@@ -63,6 +63,16 @@ services:
       - REDIS_PASS=${REDIS_PASS}
       - WORDPRESS_CONFIG_EXTRA=define('WP_DEBUG', true); define('WP_DEBUG_LOG', '/var/www/html/wp-debug.log); define('WP_DEBUG_DISPLAY', false);
 
+  phpfpm_exporter:
+    image: hipages/php-fpm_exporter
+    container_name: phpfpm_exporter
+    ports:
+      - "9253:9253"
+    networks:
+      - inception
+    environment:
+      - PHP_FPM_SCRAPE_URI=tcp://wordpress:9000/status
+
   mariadb:
     build: ./mariadb
     container_name: mariadb
