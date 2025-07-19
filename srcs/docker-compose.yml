@@ -195,6 +195,38 @@ services:
       prometheus:
         condition: service_started
 
+  portainer:
+    build: ./portainer
+    container_name: portainer
+    ports:
+      - "9014:9014"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - inception
+    restart: always
+    env_file:
+      - .env
+
+  fail2ban:
+    build: ./fail2ban
+    container_name: fail2ban
+    volumes:
+      - wordpress_files:/var/www/html
+      - /var/log/vsftpd.log:/var/log/vsftpd.log
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      nginx:
+        condition: service_healthy
+      ftp:
+        condition: service_started
+
 volumes:
   wordpress_files:
     driver: local
