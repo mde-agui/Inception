@@ -7,6 +7,7 @@ RUN echo "deb http://deb.debian.org/debian bullseye main" > /etc/apt/sources.lis
 RUN apt update && apt install -y nginx openssl net-tools procps curl
 
 COPY ./generate-ssl.sh /generate-ssl.sh
+RUN chmod +x /generate-ssl.sh
 
 COPY ./nginx.conf /etc/nginx/nginx.conf
 
