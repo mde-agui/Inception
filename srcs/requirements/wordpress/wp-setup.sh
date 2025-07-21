@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+DEBUG_LOG="/var/www/html/wp-debug.log"
 DB_HOST=${WORDPRESS_DB_HOST:-mariadb}
 DB_NAME=${WORDPRESS_DB_NAME:-${DB_NAME}}
 DB_USER=${WORDPRESS_DB_USER:-${DB_USER}}
@@ -56,18 +57,23 @@ for i in {1..30}; do
 	sleep 2
 done
 
-if ! wp core is-installed --path=/var/www/html --allow-root 2>> /var/www/html/wp-debug.log; then
-	wp core install \
-		--path=/var/www/html \
-		--url="https://${DOMAIN_NAME}" \
-		--title="Mde-agui Inceptions Site" \
-		--admin_user="$WP_ADMIN_USER" \
-		--admin_password="$WP_ADMIN_PASS" \
-		--admin_email="admin@${DOMAIN_NAME}" \
-		--skip-email \
-		--allow-root || echo "WordPress installation failed" >> /var/www/html/wp-debug.log
-	wp plugin install redis-cache --activate --path=/var/www/html --allow-root
-	wp redis enable --path=/var/www/html --allow-root
+if ! wp core is-installed --path=/var/www/html --allow-root 2>> "$DEBUG_LOG"; then
+    echo "Installing WordPress..." >> "$DEBUG_LOG"
+    wp core install \
+        --path=/var/www/html \
+        --url="https://${DOMAIN_NAME}" \
+        --title="Mde-agui Inceptions Site" \
+        --admin_user="$WP_ADMIN_USER" \
+        --admin_password="$WP_ADMIN_PASS" \
+        --admin_email="admin@${DOMAIN_NAME}" \
+        --skip-email \
+        --allow-root >> "$DEBUG_LOG" 2>&1 || echo "WordPress installation failed" >> "$DEBUG_LOG"
+
+    echo "Installing and enabling Redis plugin..." >> "$DEBUG_LOG"
+    wp plugin install redis-cache --activate --path=/var/www/html --allow-root >> "$DEBUG_LOG" 2>&1
+    wp redis enable --path=/var/www/html --allow-root >> "$DEBUG_LOG" 2>&1
+else
+    echo "WordPress is already installed." >> "$DEBUG_LOG"
 fi
 
 echo "Starting PHP-FPM" >> /var/www/html/wp-debug.log
