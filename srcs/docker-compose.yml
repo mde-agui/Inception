@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   nginx:
-    build: ./nginx
+    build: ./requirements/nginx
     container_name: nginx
     ports:
       - "443:443"
@@ -35,7 +35,7 @@ services:
       - .env
 
   wordpress:
-    build: ./wordpress
+    build: ./requirements/wordpress
     container_name: wordpress
     volumes:
       - wordpress_files:/var/www/html
@@ -64,7 +64,7 @@ services:
       - WORDPRESS_CONFIG_EXTRA=define('WP_DEBUG', true); define('WP_DEBUG_LOG', '/var/www/html/wp-debug.log); define('WP_DEBUG_DISPLAY', false);
 
   mariadb:
-    build: ./mariadb
+    build: ./requirements/mariadb
     container_name: mariadb
     volumes:
       - wordpress_db:/var/lib/mysql
@@ -87,8 +87,23 @@ services:
       - WP_ADMIN_USER=${WP_ADMIN_USER}
       - WP_ADMIN_PASS=${WP_ADMIN_PASS}
 
+  mysqld_exporter:
+    image: prom/mysqld-exporter:v0.14.0
+    container_name: mysqld_exporter
+    networks:
+      - inception
+    ports:
+      - "9104:9104"
+    environment:
+      - DATA_SOURCE_NAME=${DB_USER}:${DB_PASS}@(mariadb:3306)/
+    command:
+      - "--web.listen-address=:9104"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
   redis:
-    build: ./redis
+    build: ./requirements/bonus/redis
     container_name: redis
     networks:
       - inception
@@ -100,7 +115,7 @@ services:
 
   ftp:
     build:
-      context: ./ftp
+      context: ./requirements/bonus/ftp
       args:
         DOMAIN_NAME: ${DOMAIN_NAME}
     container_name: ftp
@@ -121,7 +136,7 @@ services:
       - DOMAIN_NAME=${DOMAIN_NAME}
 
   static:
-    build: ./static
+    build: ./requirements/bonus/static
     container_name: static
     ports:
       - "8080:8080"
@@ -134,7 +149,7 @@ services:
       - DOMAIN_NAME=${DOMAIN_NAME}
 
   adminer:
-    build: ./adminer
+    build: ./requirements/bonus/adminer
     container_name: adminer
     ports:
       - "8081:8081"
@@ -150,7 +165,7 @@ services:
         condition: service_healthy
 
   prometheus:
-    build: ./prometheus
+    build: ./requirements/bonus/prometheus
     container_name: prometheus
     ports:
       - "9090:9090"
@@ -161,7 +176,7 @@ services:
       - .env
 
   node_exporter:
-    build: ./node_exporter
+    build: ./requirements/bonus/node_exporter
     container_name: node_exporter
     ports:
       - "9100:9100"
@@ -172,7 +187,7 @@ services:
       - .env
 
   grafana:
-    build: ./grafana
+    build: ./requirements/bonus/grafana
     container_name: grafana
     ports:
       - "3000:3000"
@@ -186,37 +201,16 @@ services:
         condition: service_started
 
   portainer:
-    build: ./portainer
+    image: portainer/portainer-ce:2.20.3
     container_name: portainer
+    restart: always
     ports:
-      - "9014:9014"
+      - "9443:9443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
     networks:
       - inception
-    restart: always
-    env_file:
-      - .env
-
-  fail2ban:
-    build: ./fail2ban
-    container_name: fail2ban
-    volumes:
-      - wordpress_files:/var/www/html
-      - /var/log/vsftpd.log:/var/log/vsftpd.log
-      - nginx_conf:/etc/nginx
-    networks:
-      - inception
-    restart: always
-    env_file:
-      - .env
-    depends_on:
-      nginx:
-        condition: service_healthy
-      wordpress:
-        condition: service_healthy
-      ftp:
-        condition: service_started
 
 volumes:
   wordpress_files:
@@ -224,19 +218,15 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /home/mde-agui/data/wordpress
+      device: ${WORDPRESS_PATH}
   wordpress_db:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/mde-agui/data/database
-  nginx_conf:
+      device: ${DATABASE_PATH}
+  portainer_data:
     driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /home/mde-agui/data/nginx
 
 networks:
   inception:

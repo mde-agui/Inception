@@ -1,16 +1,20 @@
+VOLUME_PATH := /home/$(USER)/data
+ENV_PATH := srcs/.env
+
 all:
-	mkdir -p /home/mde-agui/data/wordpress /home/mde-agui/data/database
-	docker-compose -f srcs/docker-compose.yml up --build -d
+	mkdir -p $(VOLUME_PATH)/wordpress $(VOLUME_PATH)/database
+	sed "s|\$$USER|$(USER)|g" $(ENV_PATH) > $(ENV_PATH).tmp && mv $(ENV_PATH).tmp $(ENV_PATH)
+	docker-compose -f srcs/docker-compose.yml --env-file $(ENV_PATH) up --build -d
 
 stop:
-	docker-compose -f srcs/docker-compose.yml down
+	docker-compose -f srcs/docker-compose.yml --env-file $(ENV_PATH) down
 
 clean:
-	docker-compose -f srcs/docker-compose.yml down -v
+	docker-compose -f srcs/docker-compose.yml --env-file $(ENV_PATH) down -v
 	docker system prune -f
 
 fclean: clean
-	sudo rm -rf /home/mde-agui/data/wordpress/* /home/mde-agui/data/database/*
+	rm -rf $(VOLUME_PATH)/wordpress/* $(VOLUME_PATH)/database/*
 
 re: fclean all
 
