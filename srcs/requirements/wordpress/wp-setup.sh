@@ -76,5 +76,10 @@ else
     echo "WordPress is already installed." >> "$DEBUG_LOG"
 fi
 
+echo "Fixing permissions..." >> /var/www/html/wp-debug.log
+chown -R www-data:www-data /var/www/html >> /var/www/html/wp-debug.log 2>&1
+chmod -R 755 /var/www/html >> /var/www/html/wp-debug.log 2>&1
+chmod 640 /var/www/html/wp-config.php >> /var/www/html/wp-debug.log 2>&1
+
 echo "Starting PHP-FPM" >> /var/www/html/wp-debug.log
 exec php-fpm7.4 -F
