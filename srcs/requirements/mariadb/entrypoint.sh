@@ -20,10 +20,8 @@ fi
 
 echo "Starting MariaDB..."
 
-# Start MariaDB in background
 mysqld --user=mysql --datadir=/var/lib/mysql --socket=/run/mysqld/mysqld.sock --bind-address=0.0.0.0 &
 
-# Wait for it to be ready with timeout
 MAX_RETRIES=30
 count=0
 until mysqladmin ping -h localhost -u root -p"${MYSQL_ROOT_PASSWORD}" --silent; do
@@ -36,12 +34,10 @@ until mysqladmin ping -h localhost -u root -p"${MYSQL_ROOT_PASSWORD}" --silent; 
   fi
 done
 
-# Initialize wordpress db if not exists
 if ! mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "USE wordpress;" 2>/dev/null; then
   echo "Running initial SQL script..."
   envsubst < /docker-entrypoint-initdb.d/init.sql | mysql -u root -p"${MYSQL_ROOT_PASSWORD}"
 fi
 
-# Wait for MariaDB process to finish
 wait
 
