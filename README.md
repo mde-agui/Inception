@@ -13,22 +13,22 @@
 ## ✨ Key Features
 
 - **Mandatory Part**:
-  - **NGINX**: Serves WordPress over HTTPS (`https://mde-agui.42.fr:443`) with a self-signed SSL certificate, using TLSv1.2 or TLSv1.3. Forwards PHP requests to `wordpress:9000`.
-  - **WordPress**: Runs a CMS with PHP-FPM, allowing post creation, commenting, and page editing. Uses a persistent volume (`/home/mde-agui/data/wordpress`) and connects to MariaDB.
-  - **MariaDB**: Manages the WordPress database with two users (no “admin” or “Administrator” in usernames), stored in a persistent volume (`/home/mde-agui/data/database`).
-  - **Docker Volumes**: Persist WordPress files and database data at `/home/mde-agui/data`.
+  - **NGINX**: Serves WordPress over HTTPS (`https://<DOMAIN_NAME>:443`) with a self-signed SSL certificate, using TLSv1.2 or TLSv1.3. Forwards PHP requests to `wordpress:9000`.
+  - **WordPress**: Runs a CMS with PHP-FPM, allowing post creation, commenting, and page editing. Uses a persistent volume (`/home/usr/data/wordpress`) and connects to MariaDB.
+  - **MariaDB**: Manages the WordPress database with two users (no “admin” or “Administrator” in usernames), stored in a persistent volume (`/home/usr/data/database`).
+  - **Docker Volumes**: Persist WordPress files and database data at `/home/usr/data`.
   - **Docker Network**: Uses a single bridge network (`inception`) for inter-container communication.
   - **Restart Policy**: All containers use `restart: always` for automatic recovery.
 - **Bonus Part**:
   - **Redis**: Caches WordPress data, improving performance, with a persistent configuration.
   - **FTP**: Provides secure file transfers to the WordPress volume using VSFTPD with SSL/TLS on port 21 and passive ports (10000–10100).
-  - **Static Website**: Serves a non-PHP HTML page (e.g., a CV) on `http://mde-agui.42.fr:8080`.
-  - **Adminer**: Manages the MariaDB database via a web interface on `http://mde-agui.42.fr:8081`, using NGINX and PHP-FPM with Supervisor.
+  - **Static Website**: Serves a non-PHP HTML page (e.g., a CV) on `http://<DOMAIN_NAME>:8080`.
+  - **Adminer**: Manages the MariaDB database via a web interface on `http://<DOMAIN_NAME>:8081`, using NGINX and PHP-FPM with Supervisor.
   - **Monitoring Tools**:
-    - **Prometheus**: Collects metrics from NGINX, WordPress, MariaDB, and Node Exporter on `http://mde-agui.42.fr:9090`.
-    - **Grafana**: Visualizes metrics on `http://mde-agui.42.fr:3000`.
-    - **Node Exporter**: Provides system-level metrics on `http://mde-agui.42.fr:9100`.
-    - **Portainer**: Manages Docker resources via a web UI on `https://mde-agui.42.fr:9443`.
+    - **Prometheus**: Collects metrics from NGINX, WordPress, MariaDB, and Node Exporter on `http://<DOMAIN_NAME>:9090`.
+    - **Grafana**: Visualizes metrics on `http://<DOMAIN_NAME>:3000`.
+    - **Node Exporter**: Provides system-level metrics on `http://<DOMAIN_NAME>:9100`.
+    - **Portainer**: Manages Docker resources via a web UI on `https://<DOMAIN_NAME>:9443`.
 - **Compliance**:
   - Custom Dockerfiles based on `debian:bullseye` (except for official `prom/node-exporter` and `portainer/portainer-ce` images).
   - No hardcoded credentials (uses `.env` for environment variables).
@@ -54,14 +54,16 @@
 2. Set up the environment:
    - Ensure `/etc/hosts` maps the domain to the local IP:
      ```bash
-     echo "127.0.0.1 mde-agui.42.fr" | sudo tee -a /etc/hosts
+     echo "127.0.0.1 *the domain name of your choosing*" | sudo tee -a /etc/hosts
      ```
 
-3. Build and start the application:
+3. Set the environments on the .env file.
+
+4. Build and start the application:
    ```bash
    make all
    ```
-   This creates volumes (`/home/mde-agui/data/wordpress`, `/home/mde-agui/data/database`), generates `.env` from `.env.template`, and runs `docker-compose up --build -d`.
+   This creates volumes (`/home/usr/data/wordpress`, `/home/usr/data/database`), updates `.env` to get the volumes' paths, and runs `docker-compose up --build -d`.
 
 ## 📖 Usage
 
@@ -71,22 +73,22 @@ make all
 ```
 
 Access services:
-- **WordPress**: `https://mde-agui.42.fr:443` (use `-k` with `curl` for self-signed certificates).
-- **Static Website**: `http://mde-agui.42.fr:8080`.
-- **Adminer**: `http://mde-agui.42.fr:8081`.
-- **Prometheus**: `http://mde-agui.42.fr:9090`.
-- **Grafana**: `http://mde-agui.42.fr:3000`.
-- **Node Exporter**: `http://mde-agui.42.fr:9100`.
-- **Portainer**: `https://mde-agui.42.fr:9443`.
-- **FTP**: Connect via `ftp mde-agui.42.fr` (port 21) with credentials from `.env`.
+- **WordPress**: `https://<DOMAIN_NAME>:443` (use `-k` with `curl` for self-signed certificates).
+- **Static Website**: `http://<DOMAIN_NAME>:8080`.
+- **Adminer**: `http://<DOMAIN_NAME>:8081`.
+- **Prometheus**: `http://<DOMAIN_NAME>:9090`.
+- **Grafana**: `http://<DOMAIN_NAME>:3000`.
+- **Node Exporter**: `http://<DOMAIN_NAME>:9100`.
+- **Portainer**: `https://<DOMAIN_NAME>:9443`.
+- **FTP**: Connect via `ftp <DOMAIN_NAME>` (port 21) with credentials from `.env`.
 
 Example commands:
 ```bash
 # Test WordPress
-curl -k https://mde-agui.42.fr:443
+curl -k https://<DOMAIN_NAME>:443
 
 # Test FTP
-ftp mde-agui.42.fr
+ftp <DOMAIN_NAME>
 # Use $FTP_USER and $FTP_PASS from .env
 
 # Check container status
@@ -101,9 +103,9 @@ docker compose logs nginx
 ```
 Inception/
 ├── Makefile
-├── .env.template
 ├── srcs/
 │   ├── docker-compose.yml
+|   ├── .env (*DON'T FORGET TO SET ALL THE FIELDS!!!*)
 │   ├── requirements/
 │   │   ├── nginx/
 │   │   │   ├── Dockerfile
@@ -153,7 +155,9 @@ Inception/
 |---------------|------------------------------------------|
 | `make`        | Alias for `make all`.                    |
 | `make all`    | Builds and starts all containers.        |
-| `make stop`   | Stops all containers (`docker-compose down`). |
+| `make down`   | Stops all containers (`docker-compose down`). |
+| `make stop`   | Stops all containers (`docker-compose stop`). |
+| `make start`  | Starts all containers (`docker-compose start`). |
 | `make clean`  | Stops containers and removes images/volumes. |
 | `make fclean` | Removes volume data (`/home/mde-agui/data`). |
 | `make re`     | Rebuilds and restarts from scratch.      |
@@ -163,7 +167,7 @@ Inception/
 - **Docker Concepts Covered**:
   - **Dockerfiles**: Custom images for NGINX, WordPress, MariaDB, Redis, FTP, static website, Adminer, Prometheus, and Grafana, based on `debian:bullseye`. Official images used for Node Exporter and Portainer.
   - **Docker Compose**: Orchestrates services with a single bridge network (`inception`), persistent volumes (`wordpress_files`, `wordpress_db`), and `restart: always` policy.
-  - **Volumes**: Persist data at `/home/mde-agui/data/wordpress` (WordPress files) and `/home/mde-agui/data/database` (MariaDB data).
+  - **Volumes**: Persist data at `/home/usr/data/wordpress` (WordPress files) and `/home/usr/data/database` (MariaDB data).
   - **Networking**: Uses a bridge network for inter-container communication (e.g., `wordpress` connects to `mariadb:3306`).
   - **Security**: Self-signed SSL certificates for NGINX and FTP, with TLSv1.2/TLSv1.3 for HTTPS.
   - **Health Checks**: Implemented for WordPress and MariaDB to ensure service readiness.
@@ -200,7 +204,6 @@ Inception/
   - Persistence: Validated after container stops and VM reboots.
 - **Evaluation**:
   - Achieved **121%** by completing the mandatory part perfectly and implementing all bonus services.
-  - Fixed issues like blank page (database connection) and restart policy (ensured `restart: always`).
 - **Makefile**: Simplifies setup with `make all`, `stop`, `clean`, `fclean`, and `re`.
 
 ## 📜 License
