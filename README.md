@@ -105,7 +105,7 @@ Inception/
 ├── Makefile
 ├── srcs/
 │   ├── docker-compose.yml
-|   ├── .env (*DON'T FORGET TO SET ALL THE FIELDS!!!*)
+|   ├── .env (**DON'T FORGET TO SET ALL THE FIELDS!!!**)
 │   ├── requirements/
 │   │   ├── nginx/
 │   │   │   ├── Dockerfile
